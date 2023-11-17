@@ -1,3 +1,4 @@
+import asyncio
 import time
 
 from fastapi import FastAPI, Query
@@ -16,6 +17,8 @@ async def say_hello(name: str):
 
 
 @app.get("/slow-response")
-def slow_response(seconds: int = Query(10,  description="The number of seconds to wait")):
-    time.sleep(seconds)
-    return {"message": f"slept {seconds} seconds"}
+async def slow_response(seconds: int = Query(10,  description="The number of seconds to wait")):
+    start_time = time.time()
+    await asyncio.sleep(seconds)
+    end_time = time.time()
+    return {"message": f"slept {seconds} seconds, overhead {(int)(end_time - start_time * 1000) - seconds * 1000} ms"}
